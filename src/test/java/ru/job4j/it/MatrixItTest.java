@@ -90,4 +90,19 @@ public class MatrixItTest {
         MatrixIt it = new MatrixIt(in);
         assertThat(it.hasNext(), is(false));
     }
+
+    @Test
+    public void whenMultiElement() {
+        int[][] in = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+        MatrixIt it = new MatrixIt(in);
+        assertThat(it.next(), is(1));
+        assertThat(it.next(), is(2));
+        assertThat(it.next(), is(3));
+        assertThat(it.next(), is(4));
+        assertThat(it.next(), is(5));
+        assertThat(it.next(), is(6));
+        assertThat(it.next(), is(7));
+        assertThat(it.next(), is(8));
+        assertThat(it.next(), is(9));
+    }
 }
