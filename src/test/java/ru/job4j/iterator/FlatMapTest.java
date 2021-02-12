@@ -9,6 +9,17 @@ import java.util.NoSuchElementException;
 
 public class FlatMapTest {
     @Test
+    public void whenEmptyTwice() {
+        Iterator<Iterator<Object>> data = List.of(
+                List.of().iterator(),
+                List.of().iterator(),
+                List.of(new Object()).iterator()
+        ).iterator();
+        FlatMap<Object> flat = new FlatMap<>(data);
+        assertThat(flat.hasNext(), is(true));
+    }
+
+    @Test
     public void whenDiffNext() {
         Iterator<Iterator<Integer>> data = List.of(
                 List.of(1).iterator(),
