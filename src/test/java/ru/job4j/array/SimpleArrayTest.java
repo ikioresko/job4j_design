@@ -108,4 +108,19 @@ public class SimpleArrayTest {
         SimpleArray<Integer> ss = new SimpleArray<>(0);
         assertNull(ss.iterator().next());
     }
+
+    @Test
+    public void iteratorTestWhenArrayIsEmpty() {
+        SimpleArray<Integer> ss = new SimpleArray<>(0);
+        assertThat(ss.iterator().hasNext(), is(false));
+    }
+
+    @Test
+    public void iteratorTestWhenArrayIsTwoEmptyElement() {
+        SimpleArray<String> ss = new SimpleArray<>(2);
+        ss.add("");
+        ss.add("");
+        assertThat(ss.iterator().hasNext(), is(true));
+        assertThat(ss.iterator().hasNext(), is(true));
+    }
 }
