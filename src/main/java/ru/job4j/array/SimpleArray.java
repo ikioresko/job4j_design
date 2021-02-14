@@ -1,9 +1,6 @@
 package ru.job4j.array;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleArray<T> implements Iterable<T> {
     private Object[] tArray;
@@ -50,7 +47,7 @@ public class SimpleArray<T> implements Iterable<T> {
         return new Iterator<T>() {
             @Override
             public boolean hasNext() {
-                return cursor < tArray.length;
+                return cursor < tArray.length && index > 0;
             }
 
             @Override

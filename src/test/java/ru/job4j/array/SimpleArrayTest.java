@@ -123,4 +123,11 @@ public class SimpleArrayTest {
         assertThat(ss.iterator().hasNext(), is(true));
         assertThat(ss.iterator().hasNext(), is(true));
     }
+
+    @Test
+    public void iteratorWhenArrayIsEmpty() {
+        SimpleArray<String> ss = new SimpleArray<>(10);
+        assertThat(ss.iterator().hasNext(), is(false));
+        assertThat(ss.iterator().hasNext(), is(false));
+    }
 }
