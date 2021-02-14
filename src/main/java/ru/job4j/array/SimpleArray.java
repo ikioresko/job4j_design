@@ -5,7 +5,6 @@ import java.util.*;
 public class SimpleArray<T> implements Iterable<T> {
     private Object[] tArray;
     private int index = 0;
-    private int cursor = 0;
 
     public SimpleArray(int length) {
         tArray = new Object[length];
@@ -45,6 +44,8 @@ public class SimpleArray<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
+            private int cursor = 0;
+
             @Override
             public boolean hasNext() {
                 return cursor < tArray.length && index > 0;

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class SimpleArrayTest {
@@ -81,11 +82,12 @@ public class SimpleArrayTest {
         SimpleArray<Integer> ss = new SimpleArray<>(2);
         ss.add(10);
         ss.add(20);
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertThat(ss.iterator().next(), is(10));
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertThat(ss.iterator().next(), is(20));
-        assertThat(ss.iterator().hasNext(), is(false));
+        Iterator<Integer> iterator = ss.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        assertThat(iterator.next(), is(10));
+        assertThat(iterator.hasNext(), is(true));
+        assertThat(iterator.next(), is(20));
+        assertThat(iterator.hasNext(), is(false));
     }
 
     @Test
@@ -94,25 +96,28 @@ public class SimpleArrayTest {
         ss.add(null);
         ss.add(null);
         ss.add(20);
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertNull(ss.iterator().next());
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertNull(ss.iterator().next());
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertThat(ss.iterator().next(), is(20));
-        assertThat(ss.iterator().hasNext(), is(false));
+        Iterator<Integer> iterator = ss.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        assertNull(iterator.next());
+        assertThat(iterator.hasNext(), is(true));
+        assertNull(iterator.next());
+        assertThat(iterator.hasNext(), is(true));
+        assertThat(iterator.next(), is(20));
+        assertThat(iterator.hasNext(), is(false));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void whenNextFromEmpty() {
         SimpleArray<Integer> ss = new SimpleArray<>(0);
-        assertNull(ss.iterator().next());
+        Iterator<Integer> iterator = ss.iterator();
+        assertNull(iterator.next());
     }
 
     @Test
     public void iteratorTestWhenArrayIsEmpty() {
         SimpleArray<Integer> ss = new SimpleArray<>(0);
-        assertThat(ss.iterator().hasNext(), is(false));
+        Iterator<Integer> iterator = ss.iterator();
+        assertThat(iterator.hasNext(), is(false));
     }
 
     @Test
@@ -120,14 +125,16 @@ public class SimpleArrayTest {
         SimpleArray<String> ss = new SimpleArray<>(2);
         ss.add("");
         ss.add("");
-        assertThat(ss.iterator().hasNext(), is(true));
-        assertThat(ss.iterator().hasNext(), is(true));
+        Iterator<String> iterator = ss.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        assertThat(iterator.hasNext(), is(true));
     }
 
     @Test
     public void iteratorWhenArrayIsEmpty() {
         SimpleArray<String> ss = new SimpleArray<>(10);
-        assertThat(ss.iterator().hasNext(), is(false));
-        assertThat(ss.iterator().hasNext(), is(false));
+        Iterator<String> iterator = ss.iterator();
+        assertThat(iterator.hasNext(), is(false));
+        assertThat(iterator.hasNext(), is(false));
     }
 }
