@@ -9,42 +9,42 @@ import static org.junit.Assert.assertThat;
 public class RoleStoreTest  {
     @Test
     public void whenAddAndFindById() {
-        RoleStore<User> roleStore = new RoleStore<>();
-        User user1 = new User("1");
-        User user2 = new User("2");
-        roleStore.add(user1);
-        roleStore.add(user2);
-        assertThat(roleStore.findById("1"), is(user1));
-        assertThat(roleStore.findById("2"), is(user2));
+        RoleStore roleStore = new RoleStore();
+        Role role1 = new Role("1");
+        Role role2 = new Role("2");
+        roleStore.add(role1);
+        roleStore.add(role2);
+        assertThat(roleStore.findById("1"), is(role1));
+        assertThat(roleStore.findById("2"), is(role2));
     }
 
     @Test
     public void whenReplace() {
-        RoleStore<User> roleStore = new RoleStore<>();
-        User user1 = new User("1");
-        User user2 = new User("2");
-        roleStore.add(user1);
-        assertThat(roleStore.replace("1", user2), is(true));
-        assertThat(roleStore.findById("2"), is(user2));
+        RoleStore roleStore = new RoleStore();
+        Role role1 = new Role("1");
+        Role role2 = new Role("2");
+        roleStore.add(role1);
+        assertThat(roleStore.replace("1", role2), is(true));
+        assertThat(roleStore.findById("2"), is(role2));
         assertNull(roleStore.findById("1"));
     }
 
     @Test
     public void whenDelete() {
-        RoleStore<User> roleStore = new RoleStore<>();
-        User user1 = new User("1");
-        roleStore.add(user1);
+        RoleStore roleStore = new RoleStore();
+        Role role1 = new Role("1");
+        roleStore.add(role1);
         assertThat(roleStore.delete("1"), is(true));
         assertNull(roleStore.findById("1"));
     }
 
     @Test
     public void whenIdNotFound() {
-        RoleStore<User> roleStore = new RoleStore<>();
-        User user1 = new User("1");
-        roleStore.add(user1);
+        RoleStore roleStore = new RoleStore();
+        Role role1 = new Role("1");
+        roleStore.add(role1);
         assertNull(roleStore.findById("2"));
         assertThat(roleStore.delete("2"), is(false));
-        assertThat(roleStore.replace("2", new User("3")), is(false));
+        assertThat(roleStore.replace("2", new Role("3")), is(false));
     }
 }
