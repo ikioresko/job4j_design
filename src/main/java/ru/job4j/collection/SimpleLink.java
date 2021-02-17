@@ -6,11 +6,10 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class SimpleLink<E> implements Iterable<E> {
-    private int indexNode = 0;
     private int modCount = 0;
-    private transient int size = 0;
-    private transient Node<E> first;
-    private transient Node<E> last;
+    private int size = 0;
+    private Node<E> first;
+    private Node<E> last;
 
     public void add(E value) {
         final Node<E> l = last;
@@ -23,21 +22,20 @@ public class SimpleLink<E> implements Iterable<E> {
         }
         size++;
         modCount++;
-        newNode.index = indexNode++;
     }
 
     public E get(int index) {
-        Node<E> temp = first;
+        int pointer = 0;
+        Node<E> current = first;
         if (index == Objects.checkIndex(index, size)) {
-            while (temp.index != index) {
-                temp = temp.next;
+            while (pointer++ != index) {
+                current = current.next;
             }
         }
-        return temp.item;
+        return current.item;
     }
 
     private static class Node<E> {
-        private int index;
         private E item;
         private Node<E> next;
         private Node<E> previous;
@@ -53,14 +51,15 @@ public class SimpleLink<E> implements Iterable<E> {
     public Iterator<E> iterator() {
         return new Iterator<E>() {
             private int expectedModCount = modCount;
-            private int size = 0;
+            private int sizeIterator = 0;
+            private Node<E> current = first;
 
             @Override
             public boolean hasNext() {
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                return indexNode > size;
+                return size > sizeIterator;
             }
 
             @Override
@@ -68,7 +67,7 @@ public class SimpleLink<E> implements Iterable<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return get(size++);
+                return sizeIterator++ == 0 ? current.item : current.next.item;
             }
         };
     }

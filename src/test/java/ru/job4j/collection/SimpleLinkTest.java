@@ -17,7 +17,9 @@ public class SimpleLinkTest {
         sl.add("1");
         sl.add("2");
         sl.add("3");
+        assertThat(sl.get(0), is("1"));
         assertThat(sl.get(1), is("2"));
+        assertThat(sl.get(2), is("3"));
     }
 
     @Test
@@ -58,6 +60,5 @@ public class SimpleLinkTest {
         Iterator<String> iterator = sl.iterator();
         iterator.next();
         iterator.next();
-
     }
 }
