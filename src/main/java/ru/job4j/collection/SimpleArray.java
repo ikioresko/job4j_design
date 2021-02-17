@@ -24,10 +24,8 @@ public class SimpleArray<T> implements Iterable<T> {
             Object[] temp = Arrays.copyOf(container, index + index / 3);
             System.arraycopy(container, 0, temp, 0, index);
             container = temp;
-            container[Objects.checkIndex(index++, index)] = model;
-        } else {
-            container[Objects.checkIndex(index++, index)] = model;
         }
+        container[Objects.checkIndex(index++, index)] = model;
         modCount++;
     }
 
@@ -79,11 +77,5 @@ public class SimpleArray<T> implements Iterable<T> {
                 return (T) container[size++];
             }
         };
-    }
-
-    public static void main(String[] args) {
-        SimpleArray<String> s = new SimpleArray<>();
-        s.add("HI");
-        System.out.println(s.get(0));
     }
 }
