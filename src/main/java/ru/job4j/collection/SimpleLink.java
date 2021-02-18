@@ -51,7 +51,6 @@ public class SimpleLink<E> implements Iterable<E> {
     public Iterator<E> iterator() {
         return new Iterator<E>() {
             private int expectedModCount = modCount;
-            private int sizeIterator = 0;
             private Node<E> current = first;
 
             @Override
@@ -59,7 +58,7 @@ public class SimpleLink<E> implements Iterable<E> {
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                return size > sizeIterator;
+                return current != null;
             }
 
             @Override
@@ -67,7 +66,9 @@ public class SimpleLink<E> implements Iterable<E> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return sizeIterator++ == 0 ? current.item : current.next.item;
+                E value = current.item;
+                current = current.next;
+                return value;
             }
         };
     }
