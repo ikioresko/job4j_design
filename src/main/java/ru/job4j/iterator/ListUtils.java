@@ -51,24 +51,10 @@ public class ListUtils {
     }
 
     public static <T> List<T> removeAll(List<T> list, List<T> elements) {
-        int switcher = 0;
         ListIterator<T> i = list.listIterator();
-        for (T element : elements) {
-            while (i.hasNext() || i.hasPrevious()) {
-                if (switcher == 0 && element.equals(i.next())) {
-                    i.remove();
-                }
-                if (switcher == 0 && !i.hasNext()) {
-                    switcher = 1;
-                    break;
-                }
-                if (switcher == 1 && element.equals(i.previous())) {
-                    i.remove();
-                }
-                if (switcher == 1 && !i.hasPrevious()) {
-                    switcher = 0;
-                    break;
-                }
+        while (i.hasNext()) {
+            if (elements.contains(i.next())) {
+                i.remove();
             }
         }
         return list;
