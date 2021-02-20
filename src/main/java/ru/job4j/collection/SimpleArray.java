@@ -19,6 +19,10 @@ public class SimpleArray<T> implements Iterable<T> {
         return (T) container[Objects.checkIndex(index, this.index)];
     }
 
+    public int size() {
+        return index;
+    }
+
     public void add(T model) {
         if (index == container.length) {
             Object[] temp = Arrays.copyOf(container, index + index / 3);
