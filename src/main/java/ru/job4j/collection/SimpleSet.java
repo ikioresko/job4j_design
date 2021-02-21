@@ -3,6 +3,7 @@ package ru.job4j.collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class SimpleSet<E> implements Iterable<E> {
     private SimpleArray<E> simpleArrays;
@@ -17,13 +18,8 @@ public class SimpleSet<E> implements Iterable<E> {
     }
 
     public boolean add(E e) {
-        Iterator<E> iterator = simpleArrays.iterator();
-        while (iterator.hasNext()) {
-            E value = iterator.next();
-            if ((value == null && e != null) || (value != null && e == null)) {
-                continue;
-            }
-            if ((value == null && e == null) || value.equals(e)) {
+        for (E element : simpleArrays) {
+            if (Objects.equals(element, e)) {
                 return false;
             }
         }
