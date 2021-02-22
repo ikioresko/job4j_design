@@ -15,6 +15,6 @@ public class SimpleStack<T> {
 
     public boolean isEmpty() {
         Iterator<T> iterator = linked.iterator();
-        return iterator.hasNext();
+        return !iterator.hasNext();
     }
 }

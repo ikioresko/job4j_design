@@ -50,4 +50,14 @@ public class SimpleStackTest {
         SimpleStack<Integer> stack = new SimpleStack<>();
         stack.pop();
     }
+
+    @Test
+    public void whenPushThenPollIsEmpty() {
+        SimpleStack<Integer> stack = new SimpleStack<>();
+        stack.push(1);
+        assertThat(stack.isEmpty(), is(false));
+        stack.pop();
+        assertThat(stack.isEmpty(), is(true));
+
+    }
 }
