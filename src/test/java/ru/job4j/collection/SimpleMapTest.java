@@ -41,7 +41,7 @@ public class SimpleMapTest {
         SimpleMap<String, Integer> map = new SimpleMap<>();
         map.insert("map", 100);
         assertThat(map.delete("map"), is(true));
-//        assertNull(map.get("map"));
+        assertNull(map.get("map"));
     }
 
     @Test
@@ -64,15 +64,6 @@ public class SimpleMapTest {
         assertThat(map.get("3"), is(3));
         assertThat(map.get("4"), is(4));
         assertThat(map.get("5"), is(5));
-    }
-
-    @Test
-    public void whenIteratorHasNext() {
-        SimpleMap<String, Integer> map = new SimpleMap<>();
-        map.insert("map1", 100);
-        map.insert("map2", 200);
-        Iterator<Node> iterator = map.iterator();
-        assertThat(iterator.hasNext(), is(true));
     }
 
     @Test
