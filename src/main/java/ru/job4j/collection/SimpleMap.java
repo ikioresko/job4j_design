@@ -10,7 +10,6 @@ public class SimpleMap<K, V> implements Iterable<Node> {
     private final float loadFactor;
     private int maxCapacity;
     private Node<K, V>[] node;
-    private Node<K, V> head;
     private int addCount = 0;
     private int modCount = 0;
 
@@ -54,14 +53,14 @@ public class SimpleMap<K, V> implements Iterable<Node> {
         if (node[index] == null) {
             node[index] = new Node<>(hashKey, key, value, null);
         } else {
-            for (head = node[index]; head != null; head = head.getNext()) {
+            for (Node<K, V> head = node[index]; head != null; head = head.getNext()) {
                 if (checkKey(head.getKey(), key)) {
                     head.setValue(value);
                     modCount++;
                     return true;
                 }
                 if (!(checkKey(head.getKey(), key)) && head.getNext() == null) {
-                    head.setNext(hashKey, key, value, null);
+                    head.setNext(new Node<>(hashKey, key, value, null));
                     break;
                 }
             }
@@ -85,15 +84,14 @@ public class SimpleMap<K, V> implements Iterable<Node> {
 
     public V get(K key) {
         V value = null;
-        if (node[getIndex(key)] != null) {
-            head = node[getIndex(key)];
-            while (head != null) {
-                if (checkKey(head.getKey(), key)) {
-                    value = head.getValue();
-                    break;
-                }
-                head = head.getNext();
+        int index = getIndex(key);
+        Node<K, V> head = node[index];
+        while (head != null) {
+            if (checkKey(head.getKey(), key)) {
+                value = head.getValue();
+                break;
             }
+            head = head.getNext();
         }
         return value;
     }
@@ -108,17 +106,17 @@ public class SimpleMap<K, V> implements Iterable<Node> {
                 addCount--;
                 modCount++;
             } else {
-                head = node[index];
-                while (head.getNext() != null) {
-                    if (checkKey(head.getNext().getKey(), key)) {
-                        head.setNext(head.getNext().getNext().getHash(),
-                                head.getNext().getNext().getKey(),
-                                head.getNext().getNext().getValue(),
-                                head.getNext().getNext().getNext());
+                Node<K, V> head = node[index].getNext();
+                Node<K, V> prev = node[index];
+                while (head != null) {
+                    if (checkKey(prev.getNext().getKey(), key)) {
+                        prev.setNext(head.getNext());
                         rslt = true;
                         addCount--;
                         modCount++;
+                        break;
                     }
+                    prev = head;
                     head = head.getNext();
                 }
             }
@@ -154,7 +152,7 @@ public class SimpleMap<K, V> implements Iterable<Node> {
                             iteratorSize++;
                             return nodes.getKey();
                         }
-                            nodes = nodes.getNext();
+                        nodes = nodes.getNext();
                     }
                 }
                 return result.getKey();

@@ -35,8 +35,8 @@ public class Node<K, V> {
         return next;
     }
 
-    public void setNext(int hash, K key, V value, Node<K, V> next) {
-        this.next = new Node(hash, key, value, next);
+    public void setNext(Node<K, V> node) {
+        this.next = node;
     }
 
     @Override

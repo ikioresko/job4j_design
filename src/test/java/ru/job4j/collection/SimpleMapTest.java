@@ -45,6 +45,20 @@ public class SimpleMapTest {
     }
 
     @Test
+    public void whenDeleteFromBucketWithSomeElm() {
+        SimpleMap<Integer, Integer> map = new SimpleMap<>(2);
+        map.insert(1, 100);
+        map.insert(2, 200);
+        map.insert(3, 300);
+        map.insert(4, 400);
+        map.insert(5, 500);
+        map.insert(6, 600);
+        map.insert(7, 700);
+        assertThat(map.delete(4), is(true));
+        assertNull(map.get(4));
+    }
+
+    @Test
     public void whenDeleteIsAbsent() {
         SimpleMap<String, Integer> map = new SimpleMap<>();
         map.insert("map", 100);
