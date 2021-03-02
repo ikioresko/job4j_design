@@ -95,11 +95,11 @@ public class SimpleMapTest {
         map.insert("map3", 300);
         Iterator<Node> iterator = map.iterator();
         assertThat(iterator.hasNext(), is(true));
-        assertEquals(iterator.next(), "map3");
+        assertEquals(iterator.next(), new Node(3343990, "map3", 300, null));
         assertThat(iterator.hasNext(), is(true));
-        assertEquals(iterator.next(), "map2");
+        assertEquals(iterator.next(), new Node(3343989, "map2", 200, null));
         assertThat(iterator.hasNext(), is(true));
-        assertEquals(iterator.next(), "map1");
+        assertEquals(iterator.next(), new Node(3343988, "map1", 100, null));
         assertThat(iterator.hasNext(), is(false));
     }
 

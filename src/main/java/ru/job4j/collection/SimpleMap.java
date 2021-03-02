@@ -72,10 +72,10 @@ public class SimpleMap<K, V> implements Iterable<Node> {
 
     private void reSize() {
         SimpleMap<K, V> newMap = new SimpleMap<>(initialCapacity + initialCapacity * 2);
-        for (Node nodes : node) {
-            while (nodes != null) {
-                newMap.insert((K) nodes.getKey(), (V) nodes.getValue());
-                nodes = nodes.getNext();
+        Node<K, V>[] array = node;
+        for (Node nodes : array) {
+            for (Node<K, V> bcktNode = nodes; bcktNode != null; bcktNode = bcktNode.getNext()) {
+                newMap.insert(bcktNode.getKey(), bcktNode.getValue());
             }
         }
         maxCapacity = (int) (newMap.initialCapacity * loadFactor);
@@ -106,10 +106,9 @@ public class SimpleMap<K, V> implements Iterable<Node> {
                 addCount--;
                 modCount++;
             } else {
-                Node<K, V> head = node[index].getNext();
-                Node<K, V> prev = node[index];
-                while (head != null) {
-                    if (checkKey(prev.getNext().getKey(), key)) {
+                Node<K, V> prev = null;
+                for (Node<K, V> head = node[index]; head != null; head = head.getNext()) {
+                    if (prev != null && checkKey(prev.getNext().getKey(), key)) {
                         prev.setNext(head.getNext());
                         rslt = true;
                         addCount--;
@@ -117,7 +116,6 @@ public class SimpleMap<K, V> implements Iterable<Node> {
                         break;
                     }
                     prev = head;
-                    head = head.getNext();
                 }
             }
         }
@@ -129,6 +127,8 @@ public class SimpleMap<K, V> implements Iterable<Node> {
         return new Iterator() {
             private final int expModCount = modCount;
             private int iteratorSize = 0;
+            private int bucketIndex = -1;
+            private Node<K, V> currentNode;
 
             @Override
             public boolean hasNext() {
@@ -139,23 +139,25 @@ public class SimpleMap<K, V> implements Iterable<Node> {
             }
 
             @Override
-            public Object next() {
+            public Node<K, V> next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                int innerCounter = 0;
-                Node<K, V> result = null;
-                Node<K, V>[] array = node;
-                for (Node nodes : array) {
-                    while (nodes != null) {
-                        if (iteratorSize < ++innerCounter) {
-                            iteratorSize++;
-                            return nodes.getKey();
+
+                if (currentNode == null) {
+                    while (currentNode == null) {
+                        currentNode = node[++bucketIndex];
+                    }
+                } else {
+                    currentNode = currentNode.getNext();
+                    if (currentNode == null) {
+                        while (currentNode == null) {
+                            currentNode = node[++bucketIndex];
                         }
-                        nodes = nodes.getNext();
                     }
                 }
-                return result.getKey();
+                iteratorSize++;
+                return currentNode;
             }
         };
     }
