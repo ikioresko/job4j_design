@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class SimpleMap<K, V> implements Iterable<Node> {
+public class SimpleMap<K, V> implements Iterable<Node<K, V>> {
     private final int initialCapacity;
     private final float loadFactor;
     private int maxCapacity;
@@ -123,12 +123,13 @@ public class SimpleMap<K, V> implements Iterable<Node> {
     }
 
     @Override
-    public Iterator<Node> iterator() {
+    public Iterator<Node<K, V>> iterator() {
         return new Iterator() {
             private final int expModCount = modCount;
             private int iteratorSize = 0;
             private int bucketIndex = -1;
             private Node<K, V> currentNode;
+            private Node<K, V> tempNode;
 
             @Override
             public boolean hasNext() {
@@ -143,17 +144,16 @@ public class SimpleMap<K, V> implements Iterable<Node> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-
-                if (currentNode == null) {
-                    while (currentNode == null) {
-                        currentNode = node[++bucketIndex];
-                    }
-                } else {
-                    currentNode = currentNode.getNext();
+                while (bucketIndex < node.length) {
                     if (currentNode == null) {
-                        while (currentNode == null) {
-                            currentNode = node[++bucketIndex];
-                        }
+                        currentNode = node[++bucketIndex];
+                        continue;
+                    }
+                    if (Objects.equals(currentNode, tempNode)) {
+                        currentNode = currentNode.getNext();
+                    } else {
+                        tempNode = currentNode;
+                        break;
                     }
                 }
                 iteratorSize++;

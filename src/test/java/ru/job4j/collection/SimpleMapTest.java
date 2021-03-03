@@ -83,7 +83,7 @@ public class SimpleMapTest {
     @Test
     public void whenEmptyMapIteratorHasNext() {
         SimpleMap<String, Integer> map = new SimpleMap<>();
-        Iterator<Node> iterator = map.iterator();
+        Iterator<Node<String, Integer>> iterator = map.iterator();
         assertThat(iterator.hasNext(), is(false));
     }
 
@@ -93,7 +93,7 @@ public class SimpleMapTest {
         map.insert("map1", 100);
         map.insert("map2", 200);
         map.insert("map3", 300);
-        Iterator<Node> iterator = map.iterator();
+        Iterator<Node<String, Integer>> iterator = map.iterator();
         assertThat(iterator.hasNext(), is(true));
         assertEquals(iterator.next(), new Node(3343990, "map3", 300, null));
         assertThat(iterator.hasNext(), is(true));
@@ -103,10 +103,34 @@ public class SimpleMapTest {
         assertThat(iterator.hasNext(), is(false));
     }
 
+    @Test
+    public void whenIteratorNextWithCollision() {
+        SimpleMap<String, Integer> map = new SimpleMap<>(2);
+        map.insert("map1", 100);
+        map.insert("map2", 200);
+        map.insert("map3", 300);
+        map.insert("map4", 400);
+        map.insert("map5", 500);
+        Iterator<Node<String, Integer>> iterator = map.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        assertEquals(iterator.next(), new Node(3343992, "map5", 500, null));
+        assertThat(iterator.hasNext(), is(true));
+        assertEquals(iterator.next(), new Node(3343989, "map2", 200,
+                new Node(3343991, "map4", 400, null)));
+        assertThat(iterator.hasNext(), is(true));
+        assertEquals(iterator.next(), new Node(3343991, "map4", 400, null));
+        assertThat(iterator.hasNext(), is(true));
+        assertEquals(iterator.next(), new Node(3343988, "map1", 100,
+                new Node(3343990, "map3", 300, null)));
+        assertThat(iterator.hasNext(), is(true));
+        assertEquals(iterator.next(), new Node(3343990, "map3", 300, null));
+        assertThat(iterator.hasNext(), is(false));
+    }
+
     @Test(expected = NoSuchElementException.class)
     public void whenNoSuchElementException() {
         SimpleMap<String, Integer> map = new SimpleMap<>();
-        Iterator<Node> iterator = map.iterator();
+        Iterator<Node<String, Integer>> iterator = map.iterator();
         iterator.next();
     }
 
@@ -114,7 +138,7 @@ public class SimpleMapTest {
     public void whenConcurrentModificationException() {
         SimpleMap<String, Integer> map = new SimpleMap<>();
         map.insert("map1", 100);
-        Iterator<Node> iterator = map.iterator();
+        Iterator<Node<String, Integer>> iterator = map.iterator();
         map.insert("map2", 200);
         iterator.hasNext();
     }
