@@ -1,7 +1,6 @@
 package ru.job4j.collection;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Analyze {
     public static class User {
@@ -74,10 +73,14 @@ public class Analyze {
     public Info diff(List<User> previous, List<User> current) {
         Info result = new Info();
         int contains = 0;
-        for (User prevUser : previous) {
+        Map<Integer, String> prevUserMap = new HashMap<>();
+        for (User us : previous) {
+            prevUserMap.put(us.id, us.name);
+        }
+        for (Map.Entry<Integer, String> user : prevUserMap.entrySet()) {
             for (User curUser : current) {
-                if (prevUser.id == curUser.id) {
-                    if (prevUser.name.equals(curUser.name)) {
+                if (user.getKey() == curUser.id) {
+                    if (user.getValue().equals(curUser.name)) {
                         contains++;
                     } else {
                         result.changed++;
