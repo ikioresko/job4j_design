@@ -15,7 +15,7 @@ public class ResultFile {
         try (FileOutputStream out = new FileOutputStream("result.txt")) {
             for (String str : table(5)) {
                 out.write(str.getBytes());
-                out.write("\n".getBytes());
+                out.write(System.lineSeparator().getBytes());
             }
         } catch (Exception e) {
             e.printStackTrace();
