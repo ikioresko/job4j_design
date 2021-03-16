@@ -4,11 +4,10 @@ import java.io.File;
 
 public class Dir {
     public static void main(String[] args) {
-        File file = new File("c:\\projects\\job4j_design\\404.txt");
-        if (!file.exists()) {
+        if (args.length == 0) {
             throw new IllegalArgumentException(
-                    String.format("Not exist %s", file.getAbsoluteFile()));
+                    "Root folder is null. Usage java -jar dir.jar ROOT_FOLDER.");
         }
-        System.out.println("File name: " + file.getName() + ". File size: " + file.length());
+        File file = new File(args[0]);
     }
 }
