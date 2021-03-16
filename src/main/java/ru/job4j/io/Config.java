@@ -20,16 +20,16 @@ public class Config {
             reader.lines()
                     .filter(s -> s.length() > 0 && s.contains("="))
                     .forEach(k -> {
-                        if (k.strip().indexOf('=') == k.length() - 1
-                                || k.strip().indexOf('=') == 0) {
+                        int index = k.strip().indexOf('=');
+                        if (index == k.length() - 1 || index == 0) {
                             throw new IllegalArgumentException();
                         }
-                        if (k.contains("//")) {
-                            k = k.substring(0, k.indexOf("//")).strip();
+                        if (k.contains("#")) {
+                            k = k.substring(0, k.indexOf("#")).strip();
                         }
                         values.put(
-                                k.substring(0, k.indexOf('=')),
-                                k.substring(k.indexOf('=') + 1));
+                                k.substring(0, index),
+                                k.substring(index + 1));
                     });
         } catch (IOException e) {
             e.printStackTrace();
