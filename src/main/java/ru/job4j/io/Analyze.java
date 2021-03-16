@@ -19,9 +19,15 @@ public class Analyze {
                 }
                 line = reader.readLine();
             }
-            try (PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
-                out.print(result);
-            }
+            write(result, target);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void write(StringBuilder sb, File target) {
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(String.valueOf(target)))) {
+            out.print(sb);
         } catch (IOException e) {
             e.printStackTrace();
         }
