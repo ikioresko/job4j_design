@@ -15,12 +15,11 @@ public class ArgsName {
 
     private void parse(String[] args) {
         for (String str : args) {
-            if (str.indexOf('=') == -1
-                    || str.indexOf('=') == 0
-                    || str.indexOf('=') == str.length() - 1) {
+            int index = str.indexOf('=');
+            if (index == -1 || index == 0 || index == str.length() - 1) {
                 throw new IllegalArgumentException();
             }
-            values.put(str.substring(1, str.indexOf('=')), str.substring(str.indexOf('=') + 1));
+            values.put(str.substring(1, index), str.substring(index + 1));
         }
     }
 
@@ -33,9 +32,7 @@ public class ArgsName {
     public static void main(String[] args) {
         ArgsName jvm = ArgsName.of(new String[]{"-Xmx=512", "-encoding=UTF-8"});
         System.out.println(jvm.get("Xmx"));
-
         ArgsName zip = ArgsName.of(new String[]{"-out=project.zip", "-encoding=UTF-8"});
         System.out.println(zip.get("out"));
-
     }
 }
