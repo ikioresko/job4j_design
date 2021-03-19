@@ -12,13 +12,26 @@ public class EchoServer {
                 try (OutputStream out = socket.getOutputStream();
                      BufferedReader in = new BufferedReader(
                              new InputStreamReader(socket.getInputStream()))) {
-                    for (String str = in.readLine(); !str.isEmpty(); str = in.readLine()) {
-                        if (str.contains("Bye")) {
-                            server.close();
+                    String answer = "";
+                    String current;
+                    String str = in.readLine();
+                    while (!str.isEmpty()) {
+                        if (str.contains("GET /?msg=")) {
+                            int index = str.indexOf("=");
+                            current = str.substring(index + 1, str.indexOf(" ", index));
+                            if (current.equals("Exit")) {
+                                server.close();
+                                answer = "Server closed";
+                            } else if (current.equals("Hello")) {
+                                answer = "Hello";
+                            } else {
+                                answer = "What is: " + current + "?";
+                            }
                         }
-                        System.out.println(str);
+                        str = in.readLine();
                     }
-                    out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                    out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                    out.write(answer.getBytes());
                 }
             }
         }
