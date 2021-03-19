@@ -21,22 +21,22 @@ public class ConsoleChat {
         String in = "";
         boolean pause = false;
         List<String> list = new ArrayList<>();
+        while (!in.equals(OUT)) {
+            Scanner input = new Scanner(System.in);
+            System.out.println("Задайте вопрос или напишите что-нибудь: ");
+            in = input.nextLine();
+            list.add(in);
+            if (in.equals(STOP)) {
+                pause = true;
+            } else if (in.equals(CONTINUE)) {
+                pause = false;
+            }
+            if (!pause && !in.equals(OUT)) {
+                System.out.println("Ответ: " + answer());
+            }
+        }
         try (PrintWriter writer = new PrintWriter(new BufferedOutputStream(
                 new FileOutputStream(path)))) {
-            while (!in.equals(OUT)) {
-                Scanner input = new Scanner(System.in);
-                System.out.println("Задайте вопрос или напишите что-нибудь: ");
-                in = input.nextLine();
-                list.add(in);
-                if (in.equals(STOP)) {
-                    pause = true;
-                } else if (in.equals(CONTINUE)) {
-                    pause = false;
-                }
-                if (!pause && !in.equals(OUT)) {
-                    System.out.println("Ответ: " + answer());
-                }
-            }
             writer.print(list);
         } catch (IOException e) {
             e.printStackTrace();
