@@ -32,18 +32,26 @@ public class ConsoleChat {
                 pause = false;
             }
             if (!pause && !in.equals(OUT)) {
-                System.out.println("Ответ: " + answer());
+                String answer = "Ответ: " + answer();
+                System.out.println(answer);
+                list.add(answer);
             }
         }
+        logSave(list);
+    }
+
+    private void logSave(List<String> list) {
         try (PrintWriter writer = new PrintWriter(new BufferedOutputStream(
                 new FileOutputStream(path)))) {
-            writer.print(list);
+            for (String str : list) {
+                writer.println(str);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String answer() {
+    private String answer() {
         if (botAnswerList.size() == 0) {
             String line;
             try (BufferedReader reader = new BufferedReader(new FileReader(botAnswers))) {
