@@ -1,8 +1,18 @@
 package ru.job4j.serialization.json;
 
+import com.sun.xml.txw2.annotation.XmlElement;
+
+import javax.xml.bind.annotation.XmlAttribute;
+
+@XmlElement(value = "contact")
 public class Children {
-    private final String name;
-    private final int age;
+    @XmlAttribute
+    private String name;
+    @XmlAttribute
+    private int age;
+
+    public Children() {
+    }
 
     public Children(String name, int age) {
         this.name = name;

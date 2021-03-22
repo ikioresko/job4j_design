@@ -2,19 +2,32 @@ package ru.job4j.serialization.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import javax.xml.bind.annotation.*;
 import java.util.Arrays;
 
+@XmlRootElement(name = "person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Employee {
-    private final boolean sex;
-    private final int age;
-    private final Children children;
-    private final String[] duties;
+    @XmlAttribute
+    private boolean sex;
+
+    @XmlAttribute
+    private int age;
+    private Children children;
+
+    @XmlElementWrapper(name = "statuses")
+    @XmlElement(name = "status")
+    private String[] duties;
 
     public Employee(boolean sex, int age, Children children, String... duties) {
         this.sex = sex;
         this.age = age;
         this.children = children;
         this.duties = duties;
+    }
+
+    public Employee() {
     }
 
     @Override
