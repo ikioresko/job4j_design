@@ -20,7 +20,6 @@ public class EchoServer {
                             int index = str.indexOf("=");
                             current = str.substring(index + 1, str.indexOf(" ", index));
                             if (current.equals("Exit")) {
-                                server.close();
                                 answer = "Server closed";
                             } else if (current.equals("Hello")) {
                                 answer = "Hello";
@@ -32,6 +31,9 @@ public class EchoServer {
                     }
                     out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
                     out.write(answer.getBytes());
+                    if (answer.equals("Server closed")) {
+                        server.close();
+                    }
                 }
             }
         }
