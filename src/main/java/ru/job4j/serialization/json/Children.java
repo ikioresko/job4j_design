@@ -1,14 +1,7 @@
 package ru.job4j.serialization.json;
 
-import com.sun.xml.txw2.annotation.XmlElement;
-
-import javax.xml.bind.annotation.XmlAttribute;
-
-@XmlElement(value = "contact")
 public class Children {
-    @XmlAttribute
     private String name;
-    @XmlAttribute
     private int age;
 
     public Children() {

@@ -1,33 +1,23 @@
 package ru.job4j.serialization.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-@XmlRootElement(name = "person")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Employee {
-    @XmlAttribute
-    private boolean sex;
-
-    @XmlAttribute
-    private int age;
-    private Children children;
-
-    @XmlElementWrapper(name = "statuses")
-    @XmlElement(name = "status")
-    private String[] duties;
+    private final boolean sex;
+    private final int age;
+    private final Children children;
+    private final String[] duties;
 
     public Employee(boolean sex, int age, Children children, String... duties) {
         this.sex = sex;
         this.age = age;
         this.children = children;
         this.duties = duties;
-    }
-
-    public Employee() {
     }
 
     @Override
@@ -39,12 +29,28 @@ public class Employee {
                 + ", duties=" + Arrays.toString(duties) + '}';
     }
 
+    public boolean isSex() {
+        return sex;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
     public static void main(String[] args) {
-        Employee emp = new Employee(true, 30, new Children("Daniel", 10), "work", "relax");
-        Gson gson = new GsonBuilder().create();
-        String gsonEmp = gson.toJson(emp);
-        System.out.println(gsonEmp);
-        Employee empMod = gson.fromJson(gsonEmp, Employee.class);
-        System.out.println(empMod);
+        JSONObject jsonChildren = new JSONObject("{\"Daniel\":\"10\"}");
+        List<String> list = new ArrayList<>();
+        list.add("Work");
+        list.add("Relax");
+        JSONArray jsonDuties = new JSONArray(list);
+        final Employee employee = new Employee(
+                true, 30, new Children("Daniel", 10), "work", "relax");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sex", employee.isSex());
+        jsonObject.put("age", employee.getAge());
+        jsonObject.put("children", jsonChildren);
+        jsonObject.put("duties", jsonDuties);
+        System.out.println(jsonObject.toString());
+        System.out.println(new JSONObject(employee).toString());
     }
 }
