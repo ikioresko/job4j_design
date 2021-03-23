@@ -3,29 +3,26 @@ package ru.job4j.mail;
 import java.util.*;
 
 public class Mailer {
-
-    public List<User> userMerge(List<User> theUsers) {
-        Map<String, List<String>> map = new HashMap<>();
-        for (int i = 0; i < theUsers.size(); i++) {
-            List<String> emails = theUsers.get(i).getEmails();
-            if (!map.isEmpty() && emails != null) {
-                String tempName = theUsers.get(map.size() - 1).getUserName();
-                    for (String email : emails) {
-                        List<String> mapList = map.get(tempName);
-                        if (mapList != null && mapList.contains(email)) {
-                            mapList.removeAll(emails);
-                            mapList.addAll(emails);
-                            theUsers.remove(i);
-                            i--;
-                            break;
+    public Map<String, Set<String>> merge(Map<String, Set<String>> data) {
+        Iterator<Map.Entry<String, Set<String>>> iterator = data.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Set<String> value = iterator.next().getValue();
+            if (value != null && value.size() != 0) {
+                for (String key : data.keySet()) {
+                    Set<String> emails = data.get(key);
+                    if (emails != null && !Objects.equals(value, emails)) {
+                        for (String email : emails) {
+                            if (email != null && value.contains(email)) {
+                                value.addAll(emails);
+                                emails.clear();
+                            }
+                        }
                     }
                 }
-            }
-            if (i == theUsers.size() - 1) {
-                i = map.size();
-                map.put(theUsers.get(i).getUserName(), theUsers.get(i).getEmails());
+            } else {
+                iterator.remove();
             }
         }
-        return theUsers;
+        return data;
     }
 }

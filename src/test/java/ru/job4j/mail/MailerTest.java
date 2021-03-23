@@ -3,8 +3,7 @@ package ru.job4j.mail;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 
@@ -12,136 +11,167 @@ public class MailerTest {
     @Test
     public void whenMergeTwoUser() {
         Mailer mailer = new Mailer();
-        List<User> userList = new ArrayList<>();
-        User user1 = new User("user1",
-                new ArrayList<>(List.of("xxx@ya.ru", "foo@gmail.com", "lol@mail.ru")));
-        User user2 = new User("user2",
-                new ArrayList<>(List.of("foo@gmail.com", "ups@pisem.net")));
-        User user3 = new User("user3",
-                new ArrayList<>(List.of("xyz@pisem.net", "vasya@pupkin.com")));
-        User user4 = new User("user4",
-                new ArrayList<>(List.of("ups@pisem.net", "aaa@bbb.ru")));
-        User user5 = new User("user5",
-                new ArrayList<>(List.of("xyz@pisem.net")));
-        User user6 = new User("user6",
-                new ArrayList<>(List.of("www@pisem.net")));
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
-        userList.add(user5);
-        userList.add(user6);
-        List<User> expected = List.of(new User("user1",
-                        List.of("xxx@ya.ru", "lol@mail.ru", "foo@gmail.com",
-                                "ups@pisem.net", "aaa@bbb.ru")),
-                new User("user3", List.of("vasya@pupkin.com", "xyz@pisem.net")),
-                new User("user6", List.of("www@pisem.net")));
-        Assert.assertThat(mailer.userMerge(userList), is(expected));
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        set1.add("xxx@ya.ru");
+        set1.add("foo@gmail.com");
+        set1.add("lol@mail.ru");
+        Set<String> set2 = new HashSet<>();
+        set2.add("foo@gmail.com");
+        set2.add("ups@pisem.net");
+        Set<String> set3 = new HashSet<>();
+        set3.add("xyz@pisem.net");
+        set3.add("vasya@pupkin.com");
+        Set<String> set4 = new HashSet<>();
+        set4.add("ups@pisem.net");
+        set4.add("aaa@bbb.ru");
+        Set<String> set5 = new HashSet<>();
+        set5.add("xyz@pisem.net");
+        Set<String> set6 = new HashSet<>();
+        set6.add("www@pisem.net");
+        map.put("user1", set1);
+        map.put("user2", set2);
+        map.put("user3", set3);
+        map.put("user4", set4);
+        map.put("user5", set5);
+        map.put("user6", set6);
+        Map<String, Set<String>> result = mailer.merge(map);
+        Map<String, Set<String>> expected = Map.of(
+                "user1", Set.of(
+                        "aaa@bbb.ru", "ups@pisem.net", "lol@mail.ru", "xxx@ya.ru", "foo@gmail.com"),
+                "user5", Set.of("vasya@pupkin.com", "xyz@pisem.net"),
+                "user6", Set.of("www@pisem.net"));
+        Assert.assertThat(result, is(expected));
     }
 
     @Test
     public void whenAllUnique() {
         Mailer mailer = new Mailer();
-        List<User> userList = new ArrayList<>();
-        User user1 = new User("user1",
-                new ArrayList<>(List.of("xxxs@ya.ru", "foos@gmail.com", "lols@mail.ru")));
-        User user2 = new User("user2",
-                new ArrayList<>(List.of("food@gmail.com", "upsd@pisem.net")));
-        User user3 = new User("user3",
-                new ArrayList<>(List.of("xyzf@pisem.net", "vasyaf@pupkin.com")));
-        User user4 = new User("user4",
-                new ArrayList<>(List.of("upsg@pisem.net", "aaag@bbb.ru")));
-        User user5 = new User("user5",
-                new ArrayList<>(List.of("xyz@pisem.net")));
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
-        userList.add(user5);
-        List<User> expected = List.of(new User("user1",
-                        List.of("xxxs@ya.ru", "foos@gmail.com", "lols@mail.ru")),
-                new User("user2", List.of("food@gmail.com", "upsd@pisem.net")),
-                new User("user3", List.of("xyzf@pisem.net", "vasyaf@pupkin.com")),
-                new User("user4", List.of("upsg@pisem.net", "aaag@bbb.ru")),
-                new User("user5", List.of("xyz@pisem.net")));
-        Assert.assertThat(mailer.userMerge(userList), is(expected));
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        set1.add("aaa@ya.ru");
+        set1.add("bbb@gmail.com");
+        set1.add("ccc@mail.ru");
+        Set<String> set2 = new HashSet<>();
+        set2.add("ddd@gmail.com");
+        set2.add("eee@pisem.net");
+        Set<String> set3 = new HashSet<>();
+        set3.add("fff@pisem.net");
+        set3.add("ggg@pupkin.com");
+        Set<String> set4 = new HashSet<>();
+        set4.add("hhh@pisem.net");
+        set4.add("iii@bbb.ru");
+        Set<String> set5 = new HashSet<>();
+        set5.add("jjj@pisem.net");
+        map.put("user1", set1);
+        map.put("user2", set2);
+        map.put("user3", set3);
+        map.put("user4", set4);
+        map.put("user5", set5);
+        Map<String, Set<String>> result = mailer.merge(map);
+        Map<String, Set<String>> expected = Map.of(
+                "user1", Set.of("aaa@ya.ru", "ccc@mail.ru", "bbb@gmail.com"),
+                "user2", Set.of("eee@pisem.net", "ddd@gmail.com"),
+                "user5", Set.of("jjj@pisem.net"),
+                "user3", Set.of("ggg@pupkin.com", "fff@pisem.net"),
+                "user4", Set.of("hhh@pisem.net", "iii@bbb.ru"));
+        Assert.assertThat(result, is(expected));
     }
 
     @Test
-    public void whenSomeEmptyList() {
+    public void whenSomeSetEmptyAndMergeOneUser() {
         Mailer mailer = new Mailer();
-        List<User> userList = new ArrayList<>();
-        User user1 = new User("user1",
-                new ArrayList<>(List.of("xxxs@ya.ru", "foos@gmail.com", "lols@mail.ru")));
-        User user2 = new User("user2",
-                new ArrayList<>(List.of()));
-        User user3 = new User("user3",
-                new ArrayList<>(List.of("xyzf@pisem.net", "vasyaf@pupkin.com")));
-        User user4 = new User("user4",
-                new ArrayList<>(List.of("upsg@pisem.net", "aaag@bbb.ru")));
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
-        List<User> expected = List.of(new User("user1",
-                        List.of("xxxs@ya.ru", "foos@gmail.com", "lols@mail.ru")),
-                new User("user2", List.of()),
-                new User("user3", List.of("xyzf@pisem.net", "vasyaf@pupkin.com")),
-                new User("user4", List.of("upsg@pisem.net", "aaag@bbb.ru")));
-        Assert.assertThat(mailer.userMerge(userList), is(expected));
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        set1.add("aaa@ya.ru");
+        set1.add("bbb@gmail.com");
+        set1.add("ccc@mail.ru");
+        Set<String> set2 = new HashSet<>();
+        Set<String> set3 = new HashSet<>();
+        set3.add("fff@pisem.net");
+        set3.add("ggg@pupkin.com");
+        Set<String> set4 = new HashSet<>();
+        set4.add("hhh@pisem.net");
+        set4.add("bbb@gmail.com");
+        Set<String> set5 = new HashSet<>();
+        set5.add("jjj@pisem.net");
+        map.put("user1", set1);
+        map.put("user2", set2);
+        map.put("user3", set3);
+        map.put("user4", set4);
+        map.put("user5", set5);
+        Map<String, Set<String>> result = mailer.merge(map);
+        Map<String, Set<String>> expected = Map.of(
+                "user1", Set.of("aaa@ya.ru", "ccc@mail.ru", "bbb@gmail.com", "hhh@pisem.net"),
+                "user5", Set.of("jjj@pisem.net"),
+                "user3", Set.of("ggg@pupkin.com", "fff@pisem.net"));
+        Assert.assertThat(result, is(expected));
     }
 
     @Test
-    public void whenSomeElementOfLisIsNull() {
+    public void whenSomeElementOfSetIsNull() {
         Mailer mailer = new Mailer();
-        List<User> userList = new ArrayList<>();
-        List<String> nullStr = new ArrayList<>();
-        nullStr.add(null);
-        nullStr.add("xxx@ya.ru");
-        nullStr.add(null);
-        nullStr.add("foo2@gmail.com");
-        User user1 = new User("user1",
-                new ArrayList<>(List.of("xxx@ya.ru", "foo@gmail.com", "lol@mail.ru")));
-        User user2 = new User("user2", nullStr);
-        User user3 = new User("user3",
-                new ArrayList<>(List.of("xyz@pisem.net", "vasya@pupkin.com")));
-        User user4 = new User("user4",
-                new ArrayList<>(List.of("ups@pisem.net", "aaa@bbb.ru")));
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
-        List<String> expNullList = new ArrayList<>();
-        expNullList.add("foo@gmail.com");
-        expNullList.add("lol@mail.ru");
-        expNullList.add(null);
-        expNullList.add("xxx@ya.ru");
-        expNullList.add(null);
-        expNullList.add("foo2@gmail.com");
-        List<User> expected = List.of(new User("user1", expNullList),
-                new User("user3", List.of("xyz@pisem.net", "vasya@pupkin.com")),
-                new User("user4", List.of("ups@pisem.net", "aaa@bbb.ru")));
-        Assert.assertThat(mailer.userMerge(userList), is(expected));
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        set1.add("aaa@ya.ru");
+        set1.add("bbb@gmail.com");
+        set1.add(null);
+        set1.add("ccc@mail.ru");
+        Set<String> set2 = new HashSet<>();
+        Set<String> set3 = new HashSet<>();
+        set3.add("fff@pisem.net");
+        set3.add("ggg@pupkin.com");
+        Set<String> set4 = new HashSet<>();
+        set4.add("hhh@pisem.net");
+        set4.add(null);
+        set4.add("bbb@gmail.com");
+        Set<String> set5 = new HashSet<>();
+        set5.add("jjj@pisem.net");
+        map.put("user1", set1);
+        map.put("user2", set2);
+        map.put("user3", set3);
+        map.put("user4", set4);
+        map.put("user5", set5);
+        Map<String, Set<String>> result = mailer.merge(map);
+        Set<String> setWithNull = new HashSet<>();
+        setWithNull.add(null);
+        setWithNull.add("aaa@ya.ru");
+        setWithNull.add("ccc@mail.ru");
+        setWithNull.add("bbb@gmail.com");
+        setWithNull.add("hhh@pisem.net");
+        Map<String, Set<String>> expected = Map.of(
+                "user1", setWithNull,
+                "user5", Set.of("jjj@pisem.net"),
+                "user3", Set.of("ggg@pupkin.com", "fff@pisem.net"));
+        Assert.assertThat(result, is(expected));
     }
 
     @Test
-    public void whenListIsNull() {
+    public void whenSomeSetIsNull() {
         Mailer mailer = new Mailer();
-        List<User> userList = new ArrayList<>();
-        User user1 = new User("user1",
-                new ArrayList<>(List.of("xxx@ya.ru", "foo@gmail.com", "lol@mail.ru")));
-        User user2 = new User("user2", null);
-        User user3 = new User("user3",
-                new ArrayList<>(List.of("xyz@pisem.net", "foo@gmail.com")));
-        User user4 = new User("user4",
-                new ArrayList<>(List.of("ups@pisem.net", "aaa@bbb.ru")));
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
-        List<User> expected = List.of(new User("user1",
-                        List.of("xxx@ya.ru", "lol@mail.ru", "xyz@pisem.net", "foo@gmail.com")),
-                user2, new User("user4", List.of("ups@pisem.net", "aaa@bbb.ru")));
-        Assert.assertThat(mailer.userMerge(userList), is(expected));
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        set1.add("aaa@ya.ru");
+        set1.add("bbb@gmail.com");
+        set1.add("ccc@mail.ru");
+        Set<String> set3 = new HashSet<>();
+        set3.add("fff@pisem.net");
+        set3.add("ggg@pupkin.com");
+        Set<String> set4 = new HashSet<>();
+        set4.add("hhh@pisem.net");
+        set4.add("bbb@gmail.com");
+        Set<String> set5 = new HashSet<>();
+        set5.add("jjj@pisem.net");
+        map.put("user1", set1);
+        map.put("user2", null);
+        map.put("user3", set3);
+        map.put("user4", set4);
+        map.put("user5", set5);
+        Map<String, Set<String>> result = mailer.merge(map);
+        Map<String, Set<String>> expected = Map.of(
+                "user1", Set.of("aaa@ya.ru", "ccc@mail.ru", "bbb@gmail.com", "hhh@pisem.net"),
+                "user5", Set.of("jjj@pisem.net"),
+                "user3", Set.of("ggg@pupkin.com", "fff@pisem.net"));
+        Assert.assertThat(result, is(expected));
     }
 }
