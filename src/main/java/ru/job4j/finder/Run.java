@@ -9,13 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Класс содержит метод main который принимает массив аргументов в виде строк,
  * производит запуск поиска файла(ов) и записывает результаты в указанный файл.
  *
  * @author Igor Kioresko
- * @version 0.1
+ * @version 0.2
  */
 public class Run {
     /**
@@ -34,7 +36,9 @@ public class Run {
         }
         if (type.equals("regex")) {
             String name = fileName.replace("\"", "");
-            predicate = t -> t.matches(name);
+            Pattern pattern = Pattern.compile(name);
+            Matcher matcher = pattern.matcher("");
+            predicate = t -> matcher.reset(t).matches();
         }
         return predicate;
     }
@@ -58,6 +62,22 @@ public class Run {
     }
 
     /**
+     * Метод производит обход по файловому дереву и совершает поиск файлов
+     * согласно полученному предикату.
+     * @param path      директория, в которой начнется поиск;
+     * @param predicate Predicate по которому происходит поиск файлов;
+     * @return Возвращает List с записанными совпадениями в результе поиска;
+     * @throws IOException метод обхода по файловому дереву Files.walkFileTree()
+     *                     может сгенерировать исключение.
+     */
+    private static List<Path> find(String path, Predicate<String> predicate) throws IOException {
+        Search search = new Search(predicate);
+        Path start = Paths.get(path);
+        Files.walkFileTree(start, search);
+        return search.getPaths();
+    }
+
+    /**
      * @param args принимает массив аргументов в следующем виде:
      *             * -d=c:/ -n=*.txt -t=mask -o=log.txt, где
      *             * -d - директория, в которой начинать поиск.
@@ -67,19 +87,16 @@ public class Run {
      *             * -o - результат записать в файл.
      *             Передает аргументы в класс {@link Keys} для валидации введенных данных,
      *             если данные были введены верно, определяет нужный тип поиска в методе
-     *             searchType(), вызывает метод обхода по файловому дереву,
+     *             searchType(), вызывает метод find() который начинает поиск файлов,
      *             затем вызывает метод write(), для записи результатов в файл.
-     * @throws IOException метод обхода по файловому дереву Files.walkFileTree()
-     *                     может сгенерировать исключение.
+     * @throws IOException метод find() может сгенерировать исключение.
      */
     public static void main(String[] args) throws IOException {
         Keys keys = new Keys(args);
         if (keys.valid()) {
             Predicate<String> predicate = searchType(keys.type(), keys.fileName());
-            Search search = new Search(predicate);
-            Path start = Paths.get(keys.directory());
-            Files.walkFileTree(start, search);
-            write(search.getPaths(), keys.output());
+            List<Path> result = find(keys.directory(), predicate);
+            write(result, keys.output());
         }
     }
 }
