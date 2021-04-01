@@ -49,19 +49,22 @@ join engine e on c.engine_id = e.id
 join transmission t on c.transmission_id = t.id
 
 /* One car and one type of part that not used */
-select c.name, b.body_type from car c left join body b on c.body_id != b.id where c.name = 'Skoda';
-select c.name, e.volume_engine from car c left join engine e on c.engine_id != e.id where c.name = 'Skoda';
-select c.name, t.num_of_speed from car c left join transmission t on c.transmission_id != t.id where c.name = 'Skoda';
+select b.body_type from body b cross join car c where name = 'Skoda' and b.id != c.body_id;
+select e.volume_engine from engine e cross join car c where name = 'Skoda' and e.id != c.engine_id;
+select t.num_of_speed from transmission t cross join car c where name = 'Skoda' and t.id != c.transmission_id;
 
 /* All cars and one type of parts that not used */
 select c.name, b.body_type as "Parts that not used" from car c
-join body b on c.body_id != b.id
+cross join body b
+where c.body_id != b.id
 order by c.name;
 
 select c.name, e.volume_engine as "Parts that not used" from car c
-join engine e on c.engine_id != e.id
+cross join engine e
+where c.engine_id != e.id
 order by c.name;
 
 select c.name, t.num_of_speed as "Parts that not used" from car c
-join transmission t on c.transmission_id != t.id
+cross join transmission t
+where c.transmission_id != t.id
 order by c.name;
