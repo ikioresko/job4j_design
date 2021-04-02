@@ -13,7 +13,7 @@ import java.util.*;
  * столбец "name" с типом "varchar(255)".
  *
  * @author Igor Kioresko
- * @version 0.1
+ * @version 0.2
  */
 public class TableEditor implements AutoCloseable {
     private Connection connection;
@@ -59,17 +59,28 @@ public class TableEditor implements AutoCloseable {
      * Метод создает указанную таблицу;
      *
      * @param tableName Имя создаваемой таблицы;
-     * @throws SQLException createStatement(), execute(), getScheme(),
-     *                      могут генерировать исключения SQLException.
+     * @throws SQLException метод runnable() может генерировать исключения.
      */
     public void createTable(String tableName) throws SQLException {
+        String sql = String.format(
+                "create table if not exists " + tableName + " (%s, %s);",
+                "id serial primary key",
+                "name varchar(255)"
+        );
+        runnable(sql, tableName);
+    }
+
+    /**
+     * Метод выполняет полученный запрос в базе данных и выводит текущее состояние таблицы;
+     *
+     * @param command   Строка с запросом;
+     * @param tableName Имя таблицы;
+     * @throws SQLException createStatement(), execute(), getScheme(),
+     *                      могут генерировать исключения.
+     */
+    private void runnable(String command, String tableName) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "create table if not exists " + tableName + " (%s, %s);",
-                    "id serial primary key",
-                    "name varchar(255)"
-            );
-            statement.execute(sql);
+            statement.execute(command);
             System.out.println(getScheme(tableName));
         }
     }
@@ -78,18 +89,14 @@ public class TableEditor implements AutoCloseable {
      * Метод удаляет указанную таблицу;
      *
      * @param tableName Имя удаляемой таблицы;
-     * @throws SQLException createStatement(), execute(), getScheme(),
-     *                      могут генерировать исключения SQLException.
+     * @throws SQLException метод runnable() может генерировать исключения.
      */
     public void dropTable(String tableName) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "drop table if exists %s;",
-                    tableName
-            );
-            statement.execute(sql);
-            System.out.println(getScheme(tableName));
-        }
+        String sql = String.format(
+                "drop table if exists %s;",
+                tableName
+        );
+        runnable(sql, tableName);
     }
 
     /**
@@ -98,18 +105,14 @@ public class TableEditor implements AutoCloseable {
      * @param tableName  Имя таблицы в которой производятся изменения;
      * @param columnName Имя создаваемого столбца;
      * @param type       Тип данных столбца;
-     * @throws SQLException createStatement(), execute(), getScheme(),
-     *                      могут генерировать исключения SQLException.
+     * @throws SQLException метод runnable() может генерировать исключения.
      */
     public void addColumn(String tableName, String columnName, String type) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "alter table if exists " + tableName + "%s;",
-                    " add column " + columnName + " " + type
-            );
-            statement.execute(sql);
-            System.out.println(getScheme(tableName));
-        }
+        String sql = String.format(
+                "alter table if exists " + tableName + "%s;",
+                " add column " + columnName + " " + type
+        );
+        runnable(sql, tableName);
     }
 
     /**
@@ -117,18 +120,14 @@ public class TableEditor implements AutoCloseable {
      *
      * @param tableName  Имя таблицы в которой производятся изменения;
      * @param columnName Имя удаляемого столбца;
-     * @throws SQLException createStatement(), execute(), getScheme(),
-     *                      могут генерировать исключения SQLException.
+     * @throws SQLException метод runnable() может генерировать исключения.
      */
     public void dropColumn(String tableName, String columnName) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "alter table if exists " + tableName + "%s;",
-                    " drop column if exists " + columnName
-            );
-            statement.execute(sql);
-            System.out.println(getScheme(tableName));
-        }
+        String sql = String.format(
+                "alter table if exists " + tableName + "%s;",
+                " drop column if exists " + columnName
+        );
+        runnable(sql, tableName);
     }
 
     /**
@@ -137,19 +136,15 @@ public class TableEditor implements AutoCloseable {
      * @param tableName     Имя таблицы в которой производятся изменения;
      * @param columnName    Имя столбца, который нужно переименовать;
      * @param newColumnName Новое имя столбца;
-     * @throws SQLException createStatement(), execute(), getScheme(),
-     *                      могут генерировать исключения SQLException.
+     * @throws SQLException метод runnable() может генерировать исключения.
      */
     public void renameColumn(String tableName, String columnName, String newColumnName)
             throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "alter table if exists " + tableName + "%s;",
-                    " rename " + columnName + " to " + newColumnName
-            );
-            statement.execute(sql);
-            System.out.println(getScheme(tableName));
-        }
+        String sql = String.format(
+                "alter table if exists " + tableName + "%s;",
+                " rename " + columnName + " to " + newColumnName
+        );
+        runnable(sql, tableName);
     }
 
     /**
