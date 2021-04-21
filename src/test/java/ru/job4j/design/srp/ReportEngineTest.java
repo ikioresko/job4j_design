@@ -3,8 +3,16 @@ package ru.job4j.design.srp;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Test;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
+import java.sql.Timestamp;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ReportEngineTest {
@@ -15,7 +23,7 @@ public class ReportEngineTest {
     }
 
     @Test
-    public void whenOldGenerated() {
+    public void whenOldGenerated() throws Exception {
         MemStore store = new MemStore();
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
@@ -37,7 +45,7 @@ public class ReportEngineTest {
     }
 
     @Test
-    public void whenHtmlGenerated() {
+    public void whenHtmlGenerated() throws Exception {
         MemStore store = new MemStore();
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
@@ -73,7 +81,7 @@ public class ReportEngineTest {
     }
 
     @Test
-    public void whenAccDepGenerated() {
+    public void whenAccDepGenerated() throws Exception {
         MemStore store = new MemStore();
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
@@ -97,7 +105,7 @@ public class ReportEngineTest {
     }
 
     @Test
-    public void whenHRGenerated() {
+    public void whenHRGenerated() throws Exception {
         MemStore store = new MemStore();
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
@@ -119,5 +127,64 @@ public class ReportEngineTest {
                 .append(worker.getSalary()).append(";")
                 .append(ln);
         assertThat(engine.generate(em -> true), is(expect.toString()));
+    }
+
+    @Test
+    public void whenJson() throws Exception {
+        MemStore store = new MemStore();
+        Gson gson = new GsonBuilder().create();
+        Calendar now = Calendar.getInstance();
+        Employee worker = new Employee("Ivan", now, now, 100);
+        store.add(worker);
+        List<String> keywordsColumn = List.of(
+                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;", "json");
+        Comparator<Employee> comp =
+                Comparator.comparingDouble(Employee::getSalary);
+        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        StringBuilder expect = new StringBuilder()
+                .append("{\"name\":\"Ivan\",\"hired\":")
+                .append(gson.toJson(worker.getHired()))
+                .append(",\"fired\":")
+                .append(gson.toJson(worker.getFired()))
+                .append(",\"salary\":100.0}");
+        String actual = engine.generate(em -> true);
+        Employee emp = gson.fromJson(actual, Employee.class);
+        assertThat(actual, is(expect.toString()));
+        assertThat(emp, is(worker));
+    }
+
+    @Test
+    public void whenXml() throws Exception {
+        MemStore store = new MemStore();
+        Calendar now = Calendar.getInstance();
+        Date date = now.getTime();
+        LocalDateTime ldt = new Timestamp(date.getTime()).toLocalDateTime();
+        String zdt = ZonedDateTime.of(ldt, ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern(
+                        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+        Employee worker = new Employee("Ivan", now, now, 100);
+        store.add(worker);
+        List<String> keywordsColumn = List.of(
+                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;", "xml");
+        Comparator<Employee> comp =
+                Comparator.comparingDouble(Employee::getSalary);
+        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        StringBuilder expect = new StringBuilder()
+                .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
+                .append("<employee>\n")
+                .append("    <name>Ivan</name>\n")
+                .append("    <hired>").append(zdt).append("</hired>\n")
+                .append("    <fired>").append(zdt).append("</fired>\n")
+                .append("    <salary>100.0</salary>\n")
+                .append("</employee>\n");
+        String actual = engine.generate(em -> true);
+        JAXBContext context = JAXBContext.newInstance(Employee.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Employee deserialization;
+        try (StringReader reader = new StringReader(actual)) {
+            deserialization = (Employee) unmarshaller.unmarshal(reader);
+        }
+        assertThat(actual, is(expect.toString()));
+        assertThat(deserialization, is(worker));
     }
 }
