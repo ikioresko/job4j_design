@@ -28,11 +28,7 @@ public class ReportEngineTest {
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
         store.add(worker);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;");
-        Comparator<Employee> comp =
-                Comparator.comparingDouble(Employee::getSalary);
-        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        Report engine = new ReportEngine(store);
         StringBuilder expect = new StringBuilder()
                 .append("Name; Hired; Fired; Salary;")
                 .append(ln)
@@ -50,11 +46,7 @@ public class ReportEngineTest {
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
         store.add(worker);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;", "html");
-        Comparator<Employee> comp =
-                Comparator.comparingDouble(Employee::getSalary);
-        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        Report engine = new ReportHtml(store);
         StringBuilder expect = new StringBuilder()
                 .append("<!DOCTYPE HTML>").append(ln)
                 .append("<html>").append(ln)
@@ -86,11 +78,7 @@ public class ReportEngineTest {
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
         store.add(worker);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;");
-        Comparator<Employee> comp =
-                Comparator.comparing(Employee::getName);
-        Report engine = new ReportEngine(store, keywordsColumn, comp, 0.15);
+        Report engine = new ReportAccDep(store, 0.15);
         double salaryExpected = worker.getSalary();
         salaryExpected += salaryExpected * 0.15;
         StringBuilder expect = new StringBuilder()
@@ -112,11 +100,7 @@ public class ReportEngineTest {
         Employee worker2 = new Employee("Sergey", now, now, 200);
         store.add(worker);
         store.add(worker2);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Salary;");
-        Comparator<Employee> comp =
-                Comparator.comparingDouble(Employee::getSalary);
-        Report engine = new ReportEngine(store, keywordsColumn, comp.reversed());
+        Report engine = new ReportHR(store);
         StringBuilder expect = new StringBuilder()
                 .append("Name; Salary;")
                 .append(ln)
@@ -136,11 +120,7 @@ public class ReportEngineTest {
         Calendar now = Calendar.getInstance();
         Employee worker = new Employee("Ivan", now, now, 100);
         store.add(worker);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;", "json");
-        Comparator<Employee> comp =
-                Comparator.comparingDouble(Employee::getSalary);
-        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        Report engine = new ReportJson(store);
         StringBuilder expect = new StringBuilder()
                 .append("{\"name\":\"Ivan\",\"hired\":")
                 .append(gson.toJson(worker.getHired()))
@@ -164,11 +144,7 @@ public class ReportEngineTest {
                         "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
         Employee worker = new Employee("Ivan", now, now, 100);
         store.add(worker);
-        List<String> keywordsColumn = List.of(
-                "Name;", " ", "Hired;", " ", "Fired;", " ", "Salary;", "xml");
-        Comparator<Employee> comp =
-                Comparator.comparingDouble(Employee::getSalary);
-        Report engine = new ReportEngine(store, keywordsColumn, comp);
+        Report engine = new ReportXml(store);
         StringBuilder expect = new StringBuilder()
                 .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
                 .append("<employee>\n")
