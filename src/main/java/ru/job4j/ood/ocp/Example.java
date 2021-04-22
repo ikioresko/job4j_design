@@ -1,4 +1,4 @@
-package ood.ocp;
+package ru.job4j.ood.ocp;
 
 public class Example extends Printer {
     public static void main(String[] args) {
