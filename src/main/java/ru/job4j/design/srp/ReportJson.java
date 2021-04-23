@@ -3,7 +3,6 @@ package ru.job4j.design.srp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -12,7 +11,7 @@ import java.util.function.Predicate;
  * имплементирующий интерфейс Store, для получения списка сотрудников из БД
  *
  * @author Kioresko Igor
- * @version 0.1
+ * @version 0.2
  */
 public class ReportJson implements Report {
     private final Store store;
@@ -22,20 +21,16 @@ public class ReportJson implements Report {
     }
 
     /**
-     * Собирает список сотрудников по предикату через интерфейс Store
-     * Генерирует полный отчет в формате JSON по всем полям
+     * Сбор списка работников выполняется в классе Employees
+     * Затем экземпляр класса со списком работников сериализуется в JSON
      *
      * @param filter Предикат для выборки работников при сборе из БД
      * @return Отчет в JSON формате
      */
     @Override
     public String generate(Predicate<Employee> filter) {
-        StringBuilder text = new StringBuilder();
-        List<Employee> empList = store.findBy(filter);
+        Employees emp = new Employees(filter, store);
         Gson gson = new GsonBuilder().create();
-        for (Employee emp : empList) {
-            text.append(gson.toJson(emp));
-        }
-        return text.toString();
+        return gson.toJson(emp);
     }
 }

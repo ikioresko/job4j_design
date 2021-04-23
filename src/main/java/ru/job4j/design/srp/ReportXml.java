@@ -5,7 +5,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -14,7 +13,7 @@ import java.util.function.Predicate;
  * имплементирующий интерфейс Store, для получения списка сотрудников из БД
  *
  * @author Kioresko Igor
- * @version 0.1
+ * @version 0.2
  */
 public class ReportXml implements Report {
     private final Store store;
@@ -24,8 +23,8 @@ public class ReportXml implements Report {
     }
 
     /**
-     * Собирает список сотрудников по предикату через интерфейс Store
-     * Генерирует полный отчет в формате XML по всем полям
+     * Сбор списка работников выполняется в классе Employees
+     * Затем экземпляр класса со списком работников сериализуется в XML
      *
      * @param filter Предикат для выборки работников при сборе из БД
      * @return Отчет в XML формате
@@ -33,19 +32,17 @@ public class ReportXml implements Report {
      */
     @Override
     public String generate(Predicate<Employee> filter) throws JAXBException {
-        StringBuilder text = new StringBuilder();
-        List<Employee> empList = store.findBy(filter);
-        JAXBContext context = JAXBContext.newInstance(Employee.class);
+        StringBuffer sb = new StringBuffer();
+        Employees emp = new Employees(filter, store);
+        JAXBContext context = JAXBContext.newInstance(Employees.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         try (StringWriter writer = new StringWriter()) {
-            for (Employee emp : empList) {
                 marshaller.marshal(emp, writer);
-                text.append(writer.getBuffer().toString());
-            }
+               sb = writer.getBuffer();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return text.toString();
+        return sb.toString();
     }
 }

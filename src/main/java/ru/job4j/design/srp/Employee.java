@@ -2,11 +2,15 @@ package ru.job4j.design.srp;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Calendar;
 import java.util.Objects;
 
-@XmlRootElement(name = "employee")
+/**
+ * Класс описывает объект Работника
+ *
+ * @author Kioresko Igor
+ * @version 0.2
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Employee {
     private String name;
@@ -14,14 +18,14 @@ public class Employee {
     private Calendar fired;
     private double salary;
 
-    public Employee() {
-    }
-
     public Employee(String name, Calendar hired, Calendar fired, double salary) {
         this.name = name;
         this.hired = hired;
         this.fired = fired;
         this.salary = salary;
+    }
+
+    public Employee() {
     }
 
     public String getName() {
@@ -71,6 +75,16 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{"
+                + "name='" + name + '\''
+                + ", hired=" + hired.getTime()
+                + ", fired=" + fired.getTime()
+                + ", salary=" + salary
+                + '}';
     }
 }
 

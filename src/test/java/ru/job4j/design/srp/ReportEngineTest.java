@@ -122,15 +122,27 @@ public class ReportEngineTest {
         store.add(worker);
         Report engine = new ReportJson(store);
         StringBuilder expect = new StringBuilder()
-                .append("{\"name\":\"Ivan\",\"hired\":")
+                .append("{\"empList\":[{\"name\":\"Ivan\",\"hired\":")
                 .append(gson.toJson(worker.getHired()))
                 .append(",\"fired\":")
                 .append(gson.toJson(worker.getFired()))
-                .append(",\"salary\":100.0}");
+                .append(",\"salary\":100.0}]}");
         String actual = engine.generate(em -> true);
-        Employee emp = gson.fromJson(actual, Employee.class);
         assertThat(actual, is(expect.toString()));
-        assertThat(emp, is(worker));
+    }
+
+    @Test
+    public void whenJsonDeserialization() throws Exception {
+        MemStore store = new MemStore();
+        Gson gson = new GsonBuilder().create();
+        Calendar now = Calendar.getInstance();
+        Employee worker = new Employee("Ivan", now, now, 100);
+        store.add(worker);
+        Employees employees = new Employees(em -> true, store);
+        Report engine = new ReportJson(store);
+        String actual = engine.generate(em -> true);
+        Employees empDeserialization = gson.fromJson(actual, Employees.class);
+        assertThat(empDeserialization, is(employees));
     }
 
     @Test
@@ -148,19 +160,32 @@ public class ReportEngineTest {
         StringBuilder expect = new StringBuilder()
                 .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
                 .append("<employee>\n")
-                .append("    <name>Ivan</name>\n")
-                .append("    <hired>").append(zdt).append("</hired>\n")
-                .append("    <fired>").append(zdt).append("</fired>\n")
-                .append("    <salary>100.0</salary>\n")
+                .append("    <empList>\n")
+                .append("        <name>Ivan</name>\n")
+                .append("        <hired>").append(zdt).append("</hired>\n")
+                .append("        <fired>").append(zdt).append("</fired>\n")
+                .append("        <salary>100.0</salary>\n")
+                .append("    </empList>\n")
                 .append("</employee>\n");
         String actual = engine.generate(em -> true);
-        JAXBContext context = JAXBContext.newInstance(Employee.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        Employee deserialization;
-        try (StringReader reader = new StringReader(actual)) {
-            deserialization = (Employee) unmarshaller.unmarshal(reader);
-        }
         assertThat(actual, is(expect.toString()));
-        assertThat(deserialization, is(worker));
+    }
+
+    @Test
+    public void whenXmlDeserialization() throws Exception {
+        MemStore store = new MemStore();
+        Calendar now = Calendar.getInstance();
+        Employee worker = new Employee("Ivan", now, now, 100);
+        store.add(worker);
+        Report engine = new ReportXml(store);
+        String actual = engine.generate(em -> true);
+        Employees employees = new Employees(em -> true, store);
+        JAXBContext context = JAXBContext.newInstance(Employees.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Employees deserialization;
+        try (StringReader reader = new StringReader(actual)) {
+            deserialization = (Employees) unmarshaller.unmarshal(reader);
+        }
+        assertThat(deserialization, is(employees));
     }
 }
