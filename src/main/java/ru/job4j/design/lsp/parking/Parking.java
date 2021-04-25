@@ -1,7 +1,7 @@
 package ru.job4j.design.lsp.parking;
 
 public interface Parking {
-    boolean takePlace(Car car);
+    boolean takePlace(Cars car);
 
-    boolean freePlace(Car car);
+    boolean freePlace(Cars car);
 }

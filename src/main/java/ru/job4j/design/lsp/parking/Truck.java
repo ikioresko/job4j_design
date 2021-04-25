@@ -1,9 +1,9 @@
 package ru.job4j.design.lsp.parking;
 
-public class Car implements Cars {
+public class Truck implements Cars {
     private final int size;
 
-    public Car(int size) {
+    public Truck(int size) {
         this.size = size;
     }
 
