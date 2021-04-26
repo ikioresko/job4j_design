@@ -1,6 +1,5 @@
 package ru.job4j.design.lsp.parking;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
@@ -23,7 +22,6 @@ public class ParkingTest {
         assertThat(isDone, is(true));
     }
 
-    @Ignore
     @Test
     public void whenTruckAddFalse() {
         Parking parking = new ParkingPlace(2, 0);
@@ -32,7 +30,6 @@ public class ParkingTest {
         assertThat(isDone, is(false));
     }
 
-    @Ignore
     @Test
     public void whenFreeSpaceOnlyForTruck() {
         Parking parking = new ParkingPlace(0, 3);
@@ -47,5 +44,39 @@ public class ParkingTest {
         Cars truck = new Truck(2);
         boolean isDone = parking.takePlace(truck);
         assertThat(isDone, is(true));
+    }
+
+    @Test
+    public void whenExtractCarFromParking() {
+        Parking parking = new ParkingPlace(1, 0);
+        Cars car = new Car(1);
+        parking.takePlace(car);
+        boolean isDone = parking.freePlace(car);
+        assertThat(isDone, is(true));
+    }
+
+    @Test
+    public void whenExtractTruckFromParking() {
+        Parking parking = new ParkingPlace(3, 0);
+        Cars truck = new Truck(2);
+        parking.takePlace(truck);
+        boolean isDone = parking.freePlace(truck);
+        assertThat(isDone, is(true));
+    }
+
+    @Test
+    public void whenExtractAbsentCarFromParking() {
+        Parking parking = new ParkingPlace(1, 0);
+        Cars car = new Car(1);
+        boolean isDone = parking.freePlace(car);
+        assertThat(isDone, is(false));
+    }
+
+    @Test
+    public void whenExtractAbsentTruckFromParking() {
+        Parking parking = new ParkingPlace(3, 0);
+        Cars truck = new Truck(2);
+        boolean isDone = parking.freePlace(truck);
+        assertThat(isDone, is(false));
     }
 }
