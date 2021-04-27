@@ -7,7 +7,7 @@ import java.util.Map;
  * Класс реализует сущность парковки, размещая и удаляя объекты Cars из коллекций
  *
  * @author Kioresko Igor
- * @version 0.2
+ * @version 0.3
  */
 public class ParkingPlace implements Parking {
     private final Map<Cars, Integer> carParking;
@@ -35,9 +35,9 @@ public class ParkingPlace implements Parking {
     public boolean takePlace(Cars car) {
         boolean rsl = true;
         int carsTypeSize = car.size();
-        if (carsTypeSize > 1 && carsTypeSize <= truckSize) {
+        if (carsTypeSize > 1 && 1 <= truckSize) {
             truckParking.put(car, carsTypeSize);
-            truckSize -= carsTypeSize;
+            truckSize -= 1;
         } else if (carsTypeSize >= 1 && carsTypeSize <= carSize) {
             carParking.put(car, carsTypeSize);
             carSize -= carsTypeSize;
@@ -59,7 +59,7 @@ public class ParkingPlace implements Parking {
         int carsTypeSize = car.size();
         if (carsTypeSize > 1 && truckParking.containsKey(car)) {
             truckParking.remove(car);
-            truckSize += carsTypeSize;
+            truckSize += 1;
         } else if (carsTypeSize >= 1 && carParking.containsKey(car)) {
             carParking.remove(car);
             carSize += carsTypeSize;
