@@ -30,6 +30,7 @@ public class ControlQualityTest {
         cq.sorter(new Cheese("Молочный", now, createDate1, expiryDate4, 550, 0));
         cq.sorter(new Bread("Ржаной", now, createDate1, expiryDate5, 40, 0));
         cq.sorter(new Cheese("Голландский", now, createDate1, expiryDate6, 450, 0));
+        cq.resort();
         assertThat(shop.getSize(), is(3));
         assertThat(trash.getSize(), is(1));
         assertThat(warehouse.getSize(), is(2));

@@ -8,7 +8,7 @@ import java.util.List;
  * израсходован меньше чем на 25%
  *
  * @author Kioresko Igor
- * @version 0.2
+ * @version 0.3
  */
 public class Warehouse implements StoreHouse {
     private final List<Food> storage;
@@ -30,5 +30,12 @@ public class Warehouse implements StoreHouse {
     @Override
     public int getSize() {
         return storage.size();
+    }
+
+    @Override
+    public List<Food> remove() {
+        List<Food> list = new ArrayList<>(storage);
+        storage.clear();
+        return list;
     }
 }
