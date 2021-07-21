@@ -25,15 +25,15 @@ public class CSVReaderTest {
         CSVReader csv = new CSVReader();
         String path = tempFile.toAbsolutePath().toString();
         String[] args = {"-path=" + path,
-                "-delimiter=;",
+                "-delimiter=,",
                 "-out=" + result.toAbsolutePath(),
                 "-filter=name,age"};
         csv.init(args);
-        String expected = "name; age;"
+        String expected = "name, age,"
                 + System.lineSeparator()
-                + "Tom; 18;"
+                + "Tom, 18,"
                 + System.lineSeparator()
-                + "Manny; 18;";
+                + "Manny, 18,";
         String resultFileContent = Files
                 .lines(result, StandardCharsets.UTF_8)
                 .collect(Collectors.joining(System.lineSeparator()));

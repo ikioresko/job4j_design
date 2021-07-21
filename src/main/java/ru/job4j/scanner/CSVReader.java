@@ -10,7 +10,7 @@ import java.util.*;
  * Класс читает данные из CSV файла и выводит их в консоль или в файл
  *
  * @author Igor Kioresko
- * @version 0.1
+ * @version 0.2
  */
 public class CSVReader {
     /**
@@ -25,7 +25,7 @@ public class CSVReader {
     public void run(String path, String delimiter, String out, String filter)
             throws IOException {
         Path pathCSV = Path.of(path);
-        List<String> ls = scan(pathCSV);
+        List<String> ls = scan(pathCSV, delimiter);
         List<String> fl = doFilter(filter);
         List<Integer> li = getIndexes(ls, fl);
         if (out.equals("stdout")) {
@@ -61,14 +61,17 @@ public class CSVReader {
 
     /**
      * @param path Путь к файлу CSV
+     * @param delimiter  Разделитель
      * @return Возвращает заголовок таблицы CSV в виде коллекции
-     * @throws IOException – if an I/O error occurs opening source
      */
-    private List<String> scan(Path path) throws IOException {
-        Scanner scanner = new Scanner(path);
-        String str = scanner.nextLine();
-        List<String> ls = Arrays.asList(str.replace(" ", "").split(","));
-        scanner.close();
+    private List<String> scan(Path path, String delimiter) {
+        List<String> ls = new ArrayList<>();
+        try (Scanner scanner = new Scanner(path)) {
+            String str = scanner.nextLine();
+            ls = Arrays.asList(str.replace(" ", "").split(delimiter));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ls;
     }
 
@@ -78,20 +81,20 @@ public class CSVReader {
      * @param delimiter  Разделитель
      * @return Возвращает StringBuilder в виде столбцов с информацией из CSV
      * по указанному фильтру и с указанным делителем
-     * @throws IOException – if an I/O error occurs opening source
      */
-    private StringBuilder doOut(Path path, List<Integer> getIndexes, String delimiter)
-            throws IOException {
+    private StringBuilder doOut(Path path, List<Integer> getIndexes, String delimiter) {
         StringBuilder sb = new StringBuilder();
-        Scanner scanner = new Scanner(path);
-        while (scanner.hasNextLine()) {
-            List<String> lss = Arrays.asList(scanner.nextLine().split(","));
-            for (Integer index : getIndexes) {
-                sb.append(lss.get(index)).append(delimiter);
+        try (Scanner scanner = new Scanner(path)) {
+            while (scanner.hasNextLine()) {
+                List<String> lss = Arrays.asList(scanner.nextLine().split(delimiter));
+                for (Integer index : getIndexes) {
+                    sb.append(lss.get(index)).append(delimiter);
+                }
+                sb.append(System.lineSeparator());
             }
-            sb.append(System.lineSeparator());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        scanner.close();
         return sb;
     }
 
